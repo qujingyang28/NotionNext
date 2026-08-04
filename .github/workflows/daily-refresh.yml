@@ -1,0 +1,20 @@
+name: Daily Refresh Notion Links
+
+on:
+  schedule:
+    - cron: "30 14 * * *"   # 每天 14:30 UTC = 22:30 北京时间
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Empty commit to trigger rebuild
+        run: |
+          git config user.name "daily-refresh-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git commit --allow-empty -m "chore: refresh notion links $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
